@@ -1,0 +1,23 @@
+---
+- name: Provision runtime and deploy student-portal container
+  hosts: dev
+  become: yes
+  tasks:
+    - name: Install Docker engine (Debian/Ubuntu target)
+      apt:
+        name: docker.io
+        state: present
+        update_cache: yes
+
+    - name: Enable and start Docker
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Pull latest app image from Docker Hub
+      command: docker pull stephen02e3/student-portal:latest
+
+    - name: Run container
+      command: docker run -d --name student-portal -p 5000:5000 stephen02e3/student-portal:latest
+      ignore_errors: yes
